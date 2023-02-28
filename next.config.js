@@ -36,11 +36,18 @@ const nextConfig = {
     };
     config.plugins.push(
       new NextFederationPlugin({
-        name: "homePage",
-        remotes: {},
+        name: "campaignPage",
+        remotes: {
+          loginPage: `loginPage@https://micro-front-login.vercel.app/_next/static/${
+            isServer ? "ssr" : "chunks"
+          }/remoteEntry.js`,
+
+          profilePage: `profilePage@https://micro-front-profile.vercel.app/_next/static/${
+            isServer ? "ssr" : "chunks"
+          }/remoteEntry.js`,
+        },
         filename: "static/chunks/remoteEntry.js",
         exposes: {
-          "./home": "./PagesComponents/Home/Home.jsx",
           "./campaignPage": "./PagesComponents/Campaign/campaignPage.jsx",
         },
 
