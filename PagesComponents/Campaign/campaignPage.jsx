@@ -5,9 +5,12 @@ import * as S from "./styles";
 import Loading from "../../components/Loading";
 import { useRouter } from "next/router";
 
+import dynamic from "next/dynamic";
 import notification from "../../services/notification";
 
-import ProductListApiGql from "../../components/ProductListApiGql";
+const ProductListApiGqlMicro = dynamic(() =>
+  import("generalProductCards/productListApiGql")
+);
 
 function CampaignComponent({
   api,
@@ -175,7 +178,7 @@ function CampaignComponent({
           {productsloadeds.length > 0 && (
             <>
               <S.produtos>
-                <ProductListApiGql
+                <ProductListApiGqlMicro
                   page="campaign"
                   hits={productsloadeds}
                   mktName={mktName}
