@@ -45,7 +45,7 @@ const nextConfig = {
           profilePage: `profilePage@https://micro-front-profile.vercel.app/_next/static/${
             isServer ? "ssr" : "chunks"
           }/remoteEntry.js`,
-          generalProductCards: `generalProductCards@http://localhost:3019/_next/static/${
+          generalProductCards: `generalProductCards@https://micro-front-search-k5g1.vercel.app//_next/static/${
             isServer ? "ssr" : "chunks"
           }/remoteEntry.js`,
         },
