@@ -14,10 +14,11 @@ const ProductListApiGqlMicro = dynamic(() =>
 
 function CampaignComponent({
   api,
-  validaLogin,
+
   routeTranslations,
   mktName,
   appImagesUrl,
+  content,
 }) {
   const [contentPage, setContentPage] = useState();
   const [productsloadeds, setProductsLoadeds] = useState([]);
@@ -50,28 +51,19 @@ function CampaignComponent({
   const getContent = async () => {
     setLoading(true);
     try {
-      const { data: response } = await api.get(
-        `/cms2/${history.query.name[0]}?page_products=${1}&search=${search}`
-      );
-      if (response.data.length > 0) {
-        setPagination(1);
-        setContentPage(response.data[0]);
-        setProductsLoadeds(response.data[0].products.data);
+      setPagination(1);
+      setContentPage(content);
+      setProductsLoadeds(content.products.data);
 
-        setBannerDesk({
-          image: response.data[0].web_path,
-          alt: response.data[0].meta_description,
-        });
-        setBannerMobile({
-          image: response.data[0].mobile_path,
-          alt: response.data[0].meta_description,
-        });
-        setLoading(false);
-      } else {
-        notification("Página de campanha não encontrada", "error");
-        setLoading(false);
-        history.push("/404");
-      }
+      setBannerDesk({
+        image: content.web_path,
+        alt: content.meta_description,
+      });
+      setBannerMobile({
+        image: content.mobile_path,
+        alt: content.meta_description,
+      });
+      setLoading(false);
     } catch {
       notification("Erro ao carregar página de campanha", "error");
     } finally {
@@ -90,7 +82,7 @@ function CampaignComponent({
 
       if (response.data.length > 0) {
         setPagination(pagination + 1);
-        setContentPage(response.data[0].page_title);
+        setContentPage(response.data[0]);
         setProductsLoadeds([
           ...productsloadeds,
           ...response.data[0].products.data,
