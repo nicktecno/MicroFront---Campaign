@@ -1,16 +1,18 @@
 import Campaign from "../../PagesComponents/Campaign";
+import api from "../../services/api";
 import apiUnlogged from "../../services/apiUnlogged";
 
-export default function CampaignPage(props) {
-  return <Campaign content={props.data} />;
+export default function CampaignPage({ content }) {
+  return <Campaign content={content} />;
 }
 
 export async function getServerSideProps(ctx) {
   const { name } = ctx.params;
+
   let content = [];
   try {
     const response = await apiUnlogged.get(
-      `/cms2/${name}?page_products=${1}&search=${""}`
+      `/cms2/${name[0]}?page_products=${1}&search=${""}`
     );
     content = response.data;
   } catch (e) {
@@ -30,7 +32,7 @@ export async function getServerSideProps(ctx) {
         metaKdt,
         metaKeywords,
       },
-      data: content,
+      content,
     },
   };
 }

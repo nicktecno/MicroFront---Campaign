@@ -8,22 +8,30 @@ import { useRouter } from "next/router";
 import dynamic from "next/dynamic";
 import notification from "../../services/notification";
 
-const ProductListApiGqlMicro = dynamic(() =>
-  import("generalProductCards/productListApiGql")
+const ProductListApiGqlMicro = dynamic(
+  () => import("generalProductCards/productListApiGql"),
+  { ssr: false }
 );
 
 function CampaignComponent({
   api,
-
   routeTranslations,
   mktName,
   appImagesUrl,
   content,
 }) {
-  const [contentPage, setContentPage] = useState();
-  const [productsloadeds, setProductsLoadeds] = useState([]);
-  const [bannerdesk, setBannerDesk] = useState("");
-  const [bannermobile, setBannerMobile] = useState("");
+  const [contentPage, setContentPage] = useState(content.data[0]);
+  const [productsloadeds, setProductsLoadeds] = useState(
+    content.data[0].products.data
+  );
+  const [bannerdesk, setBannerDesk] = useState({
+    image: content.data[0].web_path,
+    alt: content.data[0].meta_description,
+  });
+  const [bannermobile, setBannerMobile] = useState({
+    image: content.data[0].mobile_path,
+    alt: content.data[0].meta_description,
+  });
   const [loading, setLoading] = useState(false);
   const [search, setSearch] = useState("");
   const [pagination, setPagination] = useState(1);
@@ -51,19 +59,28 @@ function CampaignComponent({
   const getContent = async () => {
     setLoading(true);
     try {
-      setPagination(1);
-      setContentPage(content);
-      setProductsLoadeds(content.products.data);
+      const { data: response } = await api.get(
+        `/cms2/${history.query.name[0]}?page_products=${1}&search=${search}`
+      );
+      if (response.data.length > 0) {
+        setPagination(1);
+        setContentPage(response.data[0]);
+        setProductsLoadeds(response.data[0].products.data);
 
-      setBannerDesk({
-        image: content.web_path,
-        alt: content.meta_description,
-      });
-      setBannerMobile({
-        image: content.mobile_path,
-        alt: content.meta_description,
-      });
-      setLoading(false);
+        setBannerDesk({
+          image: response.data[0].web_path,
+          alt: response.data[0].meta_description,
+        });
+        setBannerMobile({
+          image: response.data[0].mobile_path,
+          alt: response.data[0].meta_description,
+        });
+        setLoading(false);
+      } else {
+        notification("Página de campanha não encontrada", "error");
+        setLoading(false);
+        history.push("/404");
+      }
     } catch {
       notification("Erro ao carregar página de campanha", "error");
     } finally {
@@ -82,7 +99,7 @@ function CampaignComponent({
 
       if (response.data.length > 0) {
         setPagination(pagination + 1);
-        setContentPage(response.data[0]);
+        setContentPage(response.data[0].page_title);
         setProductsLoadeds([
           ...productsloadeds,
           ...response.data[0].products.data,
@@ -100,12 +117,6 @@ function CampaignComponent({
       setLoading(false);
     }
   };
-
-  useEffect(() => {
-    if (history.isReady) {
-      getContent();
-    }
-  }, [history]);
 
   return (
     <>

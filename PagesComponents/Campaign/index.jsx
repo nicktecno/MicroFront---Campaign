@@ -7,7 +7,7 @@ import api from "../../services/api";
 
 import CampaignComponent from "./campaignPage";
 
-const CampaignPage = (props) => {
+const CampaignPage = ({ content }) => {
   const { routeTranslations } = useLang();
   const { validaLogin } = useContext(Context);
 
@@ -22,7 +22,7 @@ const CampaignPage = (props) => {
         routeTranslations={routeTranslations}
         mktName={mktName}
         appImagesUrl={appImagesUrl}
-        content={props.content.data[0]}
+        content={content}
       />
     </>
   );
